@@ -1,13 +1,12 @@
 const express = require('express');
+const nodemailer = require('nodemailer');
 const cors = require('cors');
-const { Resend } = require('resend');
 require('dotenv').config();
 
 const app = express();
 app.use(cors());
 app.use(express.json());
-
-// render
+//render
 app.get("/", (req, res) => {
   res.json({
     message: "Server is running 🚀",
@@ -15,8 +14,23 @@ app.get("/", (req, res) => {
   });
 });
 
-// إعداد Resend
-const resend = new Resend(process.env.RESEND_API_KEY);
+// إعداد Nodemailer مع Gmail
+const transporter = nodemailer.createTransport({
+  service: 'gmail',
+  auth: {
+    user: process.env.EMAIL_USER,   // إيميلك الجامعي أو Gmail مؤقت
+    pass: process.env.EMAIL_PASS,   // App Password
+  },
+});
+
+// التحقق من الاتصال عند تشغيل السيرفر
+transporter.verify((error) => {
+  if (error) {
+    console.log('❌ خطأ في الاتصال:', error.message);
+  } else {
+    console.log('✅ السيرفر جاهز لإرسال الإيميلات');
+  }
+});
 
 // المسار الرئيسي لإرسال الإيميل
 app.post('/send-email', async (req, res) => {
@@ -31,11 +45,11 @@ app.post('/send-email', async (req, res) => {
   }
 
   try {
-    // إيميل يوصل لك (أنتِ)
-    await resend.emails.send({
-      from: 'onboarding@resend.dev',
+    // إيميل يوصل لك (أنت)
+    await transporter.sendMail({
+      from: `"Technical Support Form" <${process.env.EMAIL_USER}>`,
       to: 'it@ishtar.edu.iq',
-      reply_to: senderEmail,
+      replyTo: senderEmail,
       subject: `[Support] ${subject}`,
       html: `
         <div style="font-family: Arial, sans-serif; max-width: 600px; margin: 0 auto; padding: 20px; border: 1px solid #e0e0e0; border-radius: 8px;">
@@ -64,8 +78,8 @@ app.post('/send-email', async (req, res) => {
     });
 
     // رد تلقائي للمستخدم
-    await resend.emails.send({
-      from: 'onboarding@resend.dev',
+    await transporter.sendMail({
+      from: `"الدعم التقني - معهد عشتار" <${process.env.EMAIL_USER}>`,
       to: senderEmail,
       subject: `تم استلام طلبك: ${subject}`,
       html: `
