@@ -41,7 +41,7 @@ app.post('/send-email', async (req, res) => {
     // إيميل يوصل لك (أنت)
     await transporter.sendMail({
       from: `"Technical Support Form" <${process.env.EMAIL_USER}>`,
-      to: 'maryam.sakhar@ishtar.edu.iq',
+      to: 'it@ishtar.edu.iq',
       replyTo: senderEmail,
       subject: `[Support] ${subject}`,
       html: `
@@ -85,7 +85,7 @@ app.post('/send-email', async (req, res) => {
           <hr style="border: 1px solid #e0e0e0;" />
           <p style="color: #666; font-size: 12px;">
             فريق الدعم التقني - معهد عشتار<br/>
-            maryam.sakhar@ishtar.edu.iq
+            it@ishtar.edu.iq
           </p>
         </div>
       `,
