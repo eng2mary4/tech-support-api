@@ -34,7 +34,7 @@ app.post('/send-email', async (req, res) => {
       reply_to: senderEmail,
       subject: `[Support] ${subject}`,
       html: `
-        <div style="font-family: Arial, sans-serif; max-width: 600px; margin: 0 auto; padding: 20px; border: 1px solid #e0e0e0; border-radius: 8px;">
+        <div dir="rtl" style="font-family: Arial, sans-serif; max-width: 600px; margin: 0 auto; padding: 20px; border: 1px solid #e0e0e0; border-radius: 8px; text-align: right;">
           <h2 style="color: #1a3a6b; border-bottom: 2px solid #1a3a6b; padding-bottom: 10px;">
             🛠️ طلب دعم تقني جديد
           </h2>
