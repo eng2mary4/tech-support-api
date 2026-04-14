@@ -6,7 +6,8 @@ require('dotenv').config();
 const app = express();
 app.use(cors());
 app.use(express.json());
-//render
+
+// render
 app.get("/", (req, res) => {
   res.json({
     message: "Server is running 🚀",
@@ -14,12 +15,14 @@ app.get("/", (req, res) => {
   });
 });
 
-// إعداد Nodemailer مع Gmail
+// إعداد Nodemailer مع Brevo SMTP
 const transporter = nodemailer.createTransport({
-  service: 'gmail',
+  host: process.env.SMTP_HOST,
+  port: process.env.SMTP_PORT,
+  secure: false,
   auth: {
-    user: process.env.EMAIL_USER,   // إيميلك الجامعي أو Gmail مؤقت
-    pass: process.env.EMAIL_PASS,   // App Password
+    user: process.env.SMTP_USER,
+    pass: process.env.SMTP_PASS,
   },
 });
 
@@ -45,9 +48,9 @@ app.post('/send-email', async (req, res) => {
   }
 
   try {
-    // إيميل يوصل لك (أنت)
+    // إيميل يوصل لك (أنتِ)
     await transporter.sendMail({
-      from: `"Technical Support Form" <${process.env.EMAIL_USER}>`,
+      from: `"الدعم التقني - معهد عشتار" <${process.env.SMTP_USER}>`,
       to: 'it@ishtar.edu.iq',
       replyTo: senderEmail,
       subject: `[Support] ${subject}`,
@@ -79,7 +82,7 @@ app.post('/send-email', async (req, res) => {
 
     // رد تلقائي للمستخدم
     await transporter.sendMail({
-      from: `"الدعم التقني - معهد عشتار" <${process.env.EMAIL_USER}>`,
+      from: `"الدعم التقني - معهد عشتار" <${process.env.SMTP_USER}>`,
       to: senderEmail,
       subject: `تم استلام طلبك: ${subject}`,
       html: `
