@@ -30,7 +30,7 @@ app.post('/send-email', async (req, res) => {
     // إيميل يوصل لك (أنتِ)
     await resend.emails.send({
       from: 'onboarding@resend.dev',
-      to: 'maryam.sakhar@ishtar.edu.iq',
+      to: 'it@ishtar.edu.iq',
       reply_to: senderEmail,
       subject: `[Support] ${subject}`,
       html: `
