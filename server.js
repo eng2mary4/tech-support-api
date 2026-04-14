@@ -18,8 +18,8 @@ app.get("/", (req, res) => {
 // إعداد Nodemailer مع Brevo SMTP
 const transporter = nodemailer.createTransport({
   host: process.env.SMTP_HOST,
-  port: process.env.SMTP_PORT,
-  secure: false,
+  port: 465,
+  secure: true,  // ← غيري من false لـ true
   auth: {
     user: process.env.SMTP_USER,
     pass: process.env.SMTP_PASS,
