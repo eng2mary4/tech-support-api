@@ -1,6 +1,6 @@
 const express = require('express');
-const nodemailer = require('nodemailer');
 const cors = require('cors');
+const { Resend } = require('resend');
 require('dotenv').config();
 
 const app = express();
@@ -15,25 +15,8 @@ app.get("/", (req, res) => {
   });
 });
 
-// إعداد Nodemailer مع Brevo SMTP
-const transporter = nodemailer.createTransport({
-  host: process.env.SMTP_HOST,
-  port: 465,
-  secure: true,  // ← غيري من false لـ true
-  auth: {
-    user: process.env.SMTP_USER,
-    pass: process.env.SMTP_PASS,
-  },
-});
-
-// التحقق من الاتصال عند تشغيل السيرفر
-transporter.verify((error) => {
-  if (error) {
-    console.log('❌ خطأ في الاتصال:', error.message);
-  } else {
-    console.log('✅ السيرفر جاهز لإرسال الإيميلات');
-  }
-});
+// إعداد Resend
+const resend = new Resend(process.env.RESEND_API_KEY);
 
 // المسار الرئيسي لإرسال الإيميل
 app.post('/send-email', async (req, res) => {
@@ -49,10 +32,10 @@ app.post('/send-email', async (req, res) => {
 
   try {
     // إيميل يوصل لك (أنتِ)
-    await transporter.sendMail({
-      from: `"الدعم التقني - معهد عشتار" <${process.env.SMTP_USER}>`,
+    await resend.emails.send({
+      from: 'support@ishtar.edu.iq',
       to: 'it@ishtar.edu.iq',
-      replyTo: senderEmail,
+      reply_to: senderEmail,
       subject: `[Support] ${subject}`,
       html: `
         <div style="font-family: Arial, sans-serif; max-width: 600px; margin: 0 auto; padding: 20px; border: 1px solid #e0e0e0; border-radius: 8px;">
@@ -81,8 +64,8 @@ app.post('/send-email', async (req, res) => {
     });
 
     // رد تلقائي للمستخدم
-    await transporter.sendMail({
-      from: `"الدعم التقني - معهد عشتار" <${process.env.SMTP_USER}>`,
+    await resend.emails.send({
+      from: 'support@ishtar.edu.iq',
       to: senderEmail,
       subject: `تم استلام طلبك: ${subject}`,
       html: `
